@@ -2,9 +2,11 @@
   "name": "backend",
   "version": "1.0.0",
   "description": "Test FULLTIME",
+  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js"
   },
   "keywords": [
     "MERN",
@@ -13,6 +15,10 @@
   "author": "Mariano Amaris",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.3"
+    "express": "^4.17.3",
+    "mongoose": "^6.2.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
