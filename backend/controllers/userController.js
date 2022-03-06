@@ -1,5 +1,6 @@
 import User from "../models/User.js";
 import idGenerator from "../helpers/idGenerator.js";
+import generateJWT from "../helpers/JWTGenerator.js";
 
 const register = async (req, res) => {
   //Evitar registros duplicados
@@ -43,6 +44,7 @@ const authUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      token: generateJWT(user._id),
     });
   } else {
     const error = new Error("El password es Incorrecto");
@@ -50,4 +52,25 @@ const authUser = async (req, res) => {
   }
 };
 
-export { register, authUser };
+//Confirmar
+const authenticate = async (req, res) => {
+  const { token } = req.params;
+  const confirmedUser = await User.findOne({ token });
+  if (!confirmedUser) {
+    // Verificación de existencia de usuario
+    const error = new Error("Token no válido");
+    return res.status(403).json({ msg: error.message });
+  }
+  try {
+    //Si existe el usuario cambiamos datos de confirmación y guardamos en la base de datos
+    confirmedUser.confirmed = true;
+    confirmedUser.token = "";
+    await confirmedUser.save();
+    res.json({ msg: "Usuario confirmado correctamente" });
+    //Dado que es un token de un solo uso, si se vuelve a tratar de confirmar saldrá que el token no es válido (postman)
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export { register, authUser, authenticate };
