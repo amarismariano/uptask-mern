@@ -1,7 +1,46 @@
-import React from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Alert from "../components/Alert";
+import axios from "axios";
 
 const ForgotPassword = () => {
+  const [email, setEmail] = useState("");
+  const [alert, setAlert] = useState({});
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //Validación
+    if (email === "" || email.length < 6) {
+      setAlert({
+        msg: "El email es obligatorio",
+        error: true,
+      });
+      return;
+    }
+
+    //
+    try {
+      // TODO: Mover hacia cliente axios
+      const { data } = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/usuarios/olvide-password`,
+        { email }
+      );
+
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    }
+  };
+
+  const { msg } = alert;
+
   return (
     <>
       <h1 className="text-sky-600 fron-black text-6xl capitalize">
@@ -9,7 +48,12 @@ const ForgotPassword = () => {
         <span className="text-slate-700">proyectos</span>
       </h1>
 
-      <form className="my-10 bg-white shadow rounded-lg px-10 py-10">
+      {msg && <Alert alert={alert} />}
+
+      <form
+        onSubmit={handleSubmit}
+        className="my-10 bg-white shadow rounded-lg px-10 py-10"
+      >
         <div className="my-5">
           <label
             className="uppercase text-gray-600 block text-xl font-bold"
@@ -22,6 +66,8 @@ const ForgotPassword = () => {
             type="email"
             placeholder="Email de Registro"
             className="w-full mt-3 p-3 border rounded-xl bg-gray-50"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </div>
 
