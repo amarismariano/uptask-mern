@@ -15,8 +15,10 @@ const register = async (req, res) => {
   try {
     const user = new User(req.body);
     user.token = idGenerator(); // Generamos ID desde helpers
-    const savedUser = await user.save();
-    res.json(savedUser);
+    await user.save();
+    res.json({
+      msg: "Usuario Creado Correctamente, Revisa tu email para confirmar tu cuenta",
+    });
   } catch (error) {
     console.log(error);
   }
