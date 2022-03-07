@@ -1,45 +1,24 @@
-import { useState } from 'react'
-import logo from './logo.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import AuthLayout from "./layouts/AuthLayout";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import NewPassword from "./pages/NewPassword";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>Hello Vite + React!</p>
-        <p>
-          <button type="button" onClick={() => setCount((count) => count + 1)}>
-            count is: {count}
-          </button>
-        </p>
-        <p>
-          Edit <code>App.jsx</code> and save to test HMR updates.
-        </p>
-        <p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          {' | '}
-          <a
-            className="App-link"
-            href="https://vitejs.dev/guide/features.html"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Vite Docs
-          </a>
-        </p>
-      </header>
-    </div>
-  )
+    <BrowserRouter>
+      //Area pública de la página
+      <Routes>
+        <Route path="/" element={<AuthLayout />}>
+          <Route index element={<Login />} />
+          <Route path="registrar" element={<Register />} />
+          <Route path="olvide-password" element={<ForgotPassword />} />
+          <Route path="olvide-password/:token" element={<NewPassword />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
