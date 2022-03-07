@@ -1,6 +1,61 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import Alert from "../components/Alert";
+import axios from "axios";
 
 const Register = () => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [repeatPw, setRepeatPw] = useState("");
+  const [alert, setAlert] = useState({});
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    //Validaciones
+    if ([name, email.password, repeatPw].includes("")) {
+      setAlert({
+        msg: "Todos los campos son obligatorios",
+        error: true,
+      });
+      return;
+    }
+    //Validación de contraseñas
+    if (password !== repeatPw) {
+      setAlert({
+        msg: "Las contraseñas no son iguales",
+        error: true,
+      });
+      return;
+    }
+    //Longitud de contraseña para más seguridad
+    if (password.length < 6) {
+      setAlert({
+        msg: "La contraseña es muy corta, mínimo 6 caracteres",
+        error: true,
+      });
+      return;
+    }
+
+    setAlert({});
+
+    // Crear el usuario en la API
+
+    try {
+      const result = await axios.post("http://localhost:4000/api/usuarios", {
+        name,
+        email,
+        password,
+      });
+      console.log(result);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const { msg } = alert;
+
   return (
     <>
       <h1 className="text-sky-600 fron-black text-6xl capitalize">
@@ -8,7 +63,12 @@ const Register = () => {
         <span className="text-slate-700">proyectos</span>
       </h1>
 
-      <form className="my-10 bg-white shadow rounded-lg px-10 py-10">
+      {msg && <Alert alert={alert} />}
+
+      <form
+        className="my-10 bg-white shadow rounded-lg px-10 py-10"
+        onSubmit={handleSubmit}
+      >
         <div className="my-5">
           <label
             className="uppercase text-gray-600 block text-xl font-bold"
@@ -17,6 +77,8 @@ const Register = () => {
             Nombre
           </label>
           <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             id="name"
             type="text"
             placeholder="Tu Nombre"
@@ -32,6 +94,8 @@ const Register = () => {
             Email
           </label>
           <input
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             id="email"
             type="email"
             placeholder="Email de Registro"
@@ -47,6 +111,8 @@ const Register = () => {
             Password
           </label>
           <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             id="password"
             type="password"
             placeholder="Contraseña de Registro"
@@ -62,6 +128,8 @@ const Register = () => {
             Repetir Password
           </label>
           <input
+            value={repeatPw}
+            onChange={(e) => setRepeatPw(e.target.value)}
             id="password2"
             type="password"
             placeholder="Repite tu contraseña"
