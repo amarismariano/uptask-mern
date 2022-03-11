@@ -1,4 +1,5 @@
 import { useState, useEffect, createContext } from "react";
+import { useNavigate } from "react-router-dom";
 import clientAxios from "../config/clientAxios";
 
 const AuthContext = createContext();
@@ -8,6 +9,8 @@ const AuthProvider = ({ children }) => {
   const [auth, setAuth] = useState({});
   const [loading, setLoading] = useState(true);
 
+  const navigate = useNavigate();
+
   //Comprobar que haya token
   useEffect(() => {
     const authUser = async () => {
@@ -15,6 +18,7 @@ const AuthProvider = ({ children }) => {
 
       //Validación del token
       if (!token) {
+        setLoading(false);
         return;
       }
 
@@ -29,8 +33,9 @@ const AuthProvider = ({ children }) => {
       try {
         const { data } = await clientAxios("/usuarios/perfil", config);
         setAuth(data);
+        navigate("/proyectos");
       } catch (error) {
-        console.log(error);
+        setAuth({}); // SI expira token
       }
       setLoading(false);
     };
