@@ -9,10 +9,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [alert, setAlert] = useState({});
 
-  const { auth, setAuth, loading } = useAuth();
-
-  console.log(auth);
-  console.log(loading);
+  const { setAuth } = useAuth();
 
   //Form
   const handleSubmit = async (e) => {
