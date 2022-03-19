@@ -1,14 +1,27 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import useProjects from "../hooks/useProjects";
 import Alert from "./Alert";
 
 const FormProject = () => {
   const [name, setName] = useState("");
+  const [id, setId] = useState(null);
   const [description, setDescription] = useState("");
   const [deadline, setDeadline] = useState("");
   const [client, setClient] = useState("");
 
-  const { showAlert, alert, submitProject } = useProjects();
+  const params = useParams();
+  const { showAlert, alert, submitProject, project } = useProjects();
+
+  useEffect(() => {
+    if (params.id) {
+      setId(project._id);
+      setName(project.name);
+      setDescription(project.description);
+      setDeadline(project.deadline?.split("T")[0]);
+      setClient(project.client);
+    }
+  }, [params]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,8 +37,9 @@ const FormProject = () => {
     }
 
     //Pasar datos hacia el provider
-    await submitProject({ name, description, deadline, client });
+    await submitProject({ id, name, description, deadline, client });
 
+    setId(null);
     setName("");
     setDescription("");
     setDeadline("");
@@ -112,7 +126,7 @@ const FormProject = () => {
 
       <input
         type="submit"
-        value="Crear Proyecto"
+        value={id ? "Actualizar Proyecto" : "Crear Proyecto"}
         className="bg-sky-600 w-full p-3 uppercase font-bold text-white rounded cursor-pointer hover:bg-sky-700 transition-colors"
       />
     </form>
