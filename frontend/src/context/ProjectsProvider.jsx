@@ -188,7 +188,23 @@ const ProjectsProvider = ({ children }) => {
   };
 
   const submitTask = async (task) => {
-    console.log(task);
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post("/tareas", task, config);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

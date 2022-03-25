@@ -2,6 +2,7 @@ import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import useProjects from "../hooks/useProjects";
 import Alert from "./Alert";
+import { useParams } from "react-router-dom";
 
 const PRIORITY = ["Baja", "Media", "Alta"];
 
@@ -13,13 +14,16 @@ const ModalFormTask = () => {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
+  const [deadline, setDeadline] = useState("");
+
+  const params = useParams();
 
   // Form Submit
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // Validation
-    if ([name, description, priority].includes("")) {
+    if ([name, description, priority, deadline].includes("")) {
       showAlert({
         msg: "All Fields Are Mandatory",
         error: true,
@@ -27,7 +31,7 @@ const ModalFormTask = () => {
       return;
     }
 
-    submitTask({ name, description, priority });
+    submitTask({ name, description, deadline, priority, project: params.id });
   };
 
   const { msg } = alert;
@@ -133,6 +137,22 @@ const ModalFormTask = () => {
                         className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="mb-5">
+                      <label
+                        className="text-gray-700 uppercase font-bold text-sm"
+                        htmlFor="deadline"
+                      >
+                        Deadline
+                      </label>
+                      <input
+                        type="date"
+                        id="deadline"
+                        className="border-2 w-full p-2 mt-2 placeholder-gray-400 rounded-md"
+                        value={deadline}
+                        onChange={(e) => setDeadline(e.target.value)}
                       />
                     </div>
 

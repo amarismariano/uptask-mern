@@ -16,6 +16,8 @@ const Project = () => {
 
   const { name } = project;
 
+  console.log(project);
+
   return loading ? (
     "..."
   ) : (
