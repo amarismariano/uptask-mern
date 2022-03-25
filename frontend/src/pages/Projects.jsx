@@ -4,7 +4,6 @@ import PreviewProject from "../components/PreviewProject";
 
 const Projects = () => {
   const { projects } = useProjects();
-  console.log(projects);
 
   return (
     <>
