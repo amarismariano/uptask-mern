@@ -183,10 +183,12 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  //Estado del modal para agregar las tareas
   const handleModalTask = () => {
     setModalFormTask(!modalFormTask);
   };
 
+  //Agregamos las tareas
   const submitTask = async (task) => {
     try {
       //Validamos token
@@ -201,7 +203,15 @@ const ProjectsProvider = ({ children }) => {
       };
 
       const { data } = await clientAxios.post("/tareas", task, config);
-      console.log(data);
+
+      //Agrega la tarea al estado
+      const updatedProject = { ...project };
+      updatedProject.tasks = [...project.tasks, data];
+
+      //Seteamos y actualizamos
+      setProject(updatedProject);
+      setAlert({});
+      setModalFormTask(false);
     } catch (error) {
       console.log(error);
     }

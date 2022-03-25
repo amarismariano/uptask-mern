@@ -19,7 +19,7 @@ const ModalFormTask = () => {
   const params = useParams();
 
   // Form Submit
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validation
@@ -31,7 +31,18 @@ const ModalFormTask = () => {
       return;
     }
 
-    submitTask({ name, description, deadline, priority, project: params.id });
+    await submitTask({
+      name,
+      description,
+      deadline,
+      priority,
+      project: params.id,
+    });
+
+    setName("");
+    setDescription("");
+    setDeadline("");
+    setPriority("");
   };
 
   const { msg } = alert;
