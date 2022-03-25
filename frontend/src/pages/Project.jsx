@@ -6,7 +6,7 @@ import ModalFormTask from "../components/ModalFormTask";
 const Project = () => {
   const params = useParams();
 
-  const { getProject, project, loading } = useProjects();
+  const { getProject, project, loading, handleModalTask } = useProjects();
 
   const [modal, setModal] = useState(false);
 
@@ -47,7 +47,7 @@ const Project = () => {
         </div>
       </div>
       <button
-        onClick={() => setModal(true)}
+        onClick={handleModalTask}
         type="button"
         className="text-sm px-5 py-3 w-full md:w-auto rounded-lg uppercase font-bold bg-sky-400 text-white center mt-5 flex gap-2 items-center justify-center"
       >

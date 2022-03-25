@@ -1,13 +1,16 @@
 import { Fragment, useState, useEffect } from "react";
 import { Dialog, Transition } from "@headlessui/react";
+import useProjects from "../hooks/useProjects";
 
-const ModalFormularioTarea = ({ modal, setModal }) => {
+const ModalFormTask = () => {
+  const { modalFormTask, handleModalTask } = useProjects();
+
   return (
-    <Transition.Root show={modal} as={Fragment}>
+    <Transition.Root show={modalFormTask} as={Fragment}>
       <Dialog
         as="div"
         className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={() => setModal(false)}
+        onClose={handleModalTask}
       >
         <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
           <Transition.Child
@@ -44,7 +47,7 @@ const ModalFormularioTarea = ({ modal, setModal }) => {
                 <button
                   type="button"
                   className="bg-white rounded-md text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                  onClick={() => setModal(false)}
+                  onClick={handleModalTask}
                 >
                   <span className="sr-only">Cerrar</span>
                   <svg
@@ -67,7 +70,11 @@ const ModalFormularioTarea = ({ modal, setModal }) => {
                   <Dialog.Title
                     as="h3"
                     className="text-lg leading-6 font-bold text-gray-900"
-                  ></Dialog.Title>
+                  >
+                    <h1 className="text-4xl">Title</h1>{" "}
+                  </Dialog.Title>
+
+                  <p>Content</p>
                 </div>
               </div>
             </div>
@@ -78,4 +85,4 @@ const ModalFormularioTarea = ({ modal, setModal }) => {
   );
 };
 
-export default ModalFormularioTarea;
+export default ModalFormTask;
