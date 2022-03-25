@@ -3,7 +3,10 @@ import Task from "../models/Task.js";
 
 const getProjects = async (req, res) => {
   //Obtener proyectos
-  const projects = await Project.find().where("owner").equals(req.user);
+  const projects = await Project.find()
+    .where("owner")
+    .equals(req.user)
+    .select("-tasks");
 
   res.json(projects);
 };
@@ -23,7 +26,7 @@ const newProject = async (req, res) => {
 const getProject = async (req, res) => {
   //Obtener 1 proyecto determinado
   const { id } = req.params;
-  const project = await Project.findById(id);
+  const project = await Project.findById(id).populate("tasks");
 
   //Si no existe proyecto
   if (!project) {
