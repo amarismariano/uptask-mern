@@ -16,7 +16,7 @@ const Projects = () => {
           ))
         ) : (
           <p className="text-center text-gray-600 uppercase p-5">
-            No hy proyectos
+            No hay proyectos
           </p>
         )}
       </div>

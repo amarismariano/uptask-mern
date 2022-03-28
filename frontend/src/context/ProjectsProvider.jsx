@@ -7,9 +7,11 @@ const ProjectsContext = createContext();
 const ProjectsProvider = ({ children }) => {
   const [projects, setProjects] = useState([]);
   const [project, setProject] = useState({});
+  const [task, setTask] = useState({});
   const [alert, setAlert] = useState({});
   const [loading, setLoading] = useState(false);
   const [modalFormTask, setModalFormTask] = useState(false);
+  const [modalDeleteTask, setModalDeleteTask] = useState(false);
 
   const navigate = useNavigate();
 
@@ -186,10 +188,21 @@ const ProjectsProvider = ({ children }) => {
   //Estado del modal para agregar las tareas
   const handleModalTask = () => {
     setModalFormTask(!modalFormTask);
+    setTask({});
   };
 
   //Agregamos las tareas
   const submitTask = async (task) => {
+    // To make sure when its creating o editing a new/existing task
+    if (task?.id) {
+      await editTask(task);
+    } else {
+      await addTask(task);
+    }
+  };
+
+  // Submit task
+  const addTask = async (task) => {
     try {
       //Validamos token
       const token = localStorage.getItem("token");
@@ -217,20 +230,108 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  //Edit Task
+  const editTask = async (task) => {
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.put(
+        `/tareas/${task.id}`,
+        task,
+        config
+      );
+
+      // We update the DOM by validating our current states and then we set the new changes
+      const updatedProject = { ...project };
+      updatedProject.tasks = updatedProject.tasks.map((taskState) =>
+        taskState._id === data._id ? data : taskState
+      );
+
+      setProject(updatedProject);
+      setAlert({});
+      setModalFormTask(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  //Modal for the edit of the tasks
+  const handleModalEditTask = (task) => {
+    setTask(task);
+    setModalFormTask(true);
+  };
+
+  //Modal for the delete of a task
+  const handleModalDeleteTask = (task) => {
+    setTask(task);
+    setModalDeleteTask(!modalDeleteTask);
+  };
+
+  //Delete Task
+  const deleteTask = async () => {
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.delete(`/tareas/${task._id}`, config);
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+
+      // We update the DOM by validating our current states and then we set the new changes
+      const updatedProject = { ...project };
+      updatedProject.tasks = updatedProject.tasks.filter(
+        (taskState) => taskState._id !== task._id
+      );
+
+      setProject(updatedProject);
+      setModalDeleteTask(false);
+      setTask({});
+      setTimeout(() => {
+        setAlert({});
+      }, 3000);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
         projects,
         project,
+        task,
         alert,
         loading,
         modalFormTask,
+        modalDeleteTask,
         showAlert,
         submitProject,
         getProject,
         deleteProject,
         handleModalTask,
+        handleModalEditTask,
+        handleModalDeleteTask,
         submitTask,
+        deleteTask,
       }}
     >
       {children}

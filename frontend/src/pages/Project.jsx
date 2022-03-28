@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import useProjects from "../hooks/useProjects";
 import ModalFormTask from "../components/ModalFormTask";
+import ModalDeleteTask from "../components/ModalDeleteTask";
 import Task from "../components/Task";
+import Alert from "../components/Alert";
 
 const Project = () => {
   const params = useParams();
 
-  const { getProject, project, loading, handleModalTask } = useProjects();
-
-  const [modal, setModal] = useState(false);
+  const { getProject, project, loading, handleModalTask, alert } =
+    useProjects();
 
   useEffect(() => {
     getProject(params.id);
@@ -17,7 +18,7 @@ const Project = () => {
 
   const { name } = project;
 
-  console.log(project);
+  const { msg } = alert;
 
   return loading ? (
     "..."
@@ -71,6 +72,12 @@ const Project = () => {
 
       <p className="font-bold text-xl mt-10">Project Tasks</p>
 
+      <div className="flex justify-center">
+        <div className="w-full md:w-1/3 lg:w-1/4">
+          {msg && <Alert alert={alert} />}
+        </div>
+      </div>
+
       <div className="bg-white shadow mt-10 rounded-lg">
         {project.tasks?.length ? (
           project.tasks?.map((task) => <Task key={task._id} task={task} />)
@@ -81,7 +88,8 @@ const Project = () => {
         )}
       </div>
 
-      <ModalFormTask modal={modal} setModal={setModal} />
+      <ModalFormTask />
+      <ModalDeleteTask />
     </>
   );
 };

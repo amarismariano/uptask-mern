@@ -105,7 +105,7 @@ const deleteTask = async (req, res) => {
   }
   try {
     await task.deleteOne();
-    res.json({ msg: "Tarea Eliminada" });
+    res.json({ msg: "La Tarea se eliminó" });
   } catch (error) {
     console.log(error);
   }

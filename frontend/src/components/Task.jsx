@@ -1,6 +1,10 @@
 import { formatDate } from "../helpers/formatDate";
+import useProjects from "../hooks/useProjects";
 
 const Task = ({ task }) => {
+  // Context
+  const { handleModalEditTask, handleModalDeleteTask } = useProjects();
+
   const { description, name, deadline, priority, status, _id } = task;
 
   return (
@@ -8,12 +12,15 @@ const Task = ({ task }) => {
       <div>
         <p className="mb-1 text-xl">{name}</p>
         <p className="mb-1 text-sm text-gray-500 uppercase">{description}</p>
-        <p className="mb-1 text-xl">{formatDate(deadline)}</p>
+        <p className="mb-1 text-sm">{formatDate(deadline)}</p>
         <p className="mb-1 text-gray-600">Priority: {priority}</p>
       </div>
 
       <div className="flex gap-2">
-        <button className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg">
+        <button
+          onClick={() => handleModalEditTask(task)}
+          className="bg-indigo-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
+        >
           Edit
         </button>
         {status ? (
@@ -26,7 +33,10 @@ const Task = ({ task }) => {
           </button>
         )}
 
-        <button className="bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg">
+        <button
+          onClick={() => handleModalDeleteTask(task)}
+          className="bg-red-600 px-4 py-3 text-white uppercase font-bold text-sm rounded-lg"
+        >
           Delete
         </button>
       </div>

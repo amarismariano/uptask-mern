@@ -7,7 +7,8 @@ import { useParams } from "react-router-dom";
 const PRIORITY = ["Baja", "Media", "Alta"];
 
 const ModalFormTask = () => {
-  const { modalFormTask, handleModalTask, showAlert, alert, submitTask } =
+  //Context
+  const { modalFormTask, handleModalTask, showAlert, alert, submitTask, task } =
     useProjects();
 
   //States
@@ -15,8 +16,27 @@ const ModalFormTask = () => {
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("");
   const [deadline, setDeadline] = useState("");
+  const [id, setId] = useState("");
 
   const params = useParams();
+
+  useEffect(() => {
+    //If there is a task, its gonna put it in the state
+    if (task?._id) {
+      setName(task.name);
+      setDescription(task.description);
+      setPriority(task.priority);
+      setDeadline(task.deadline?.split("T")[0]);
+      setId(task._id);
+      return;
+    }
+    // If not, just default the values to nothing
+    setName("");
+    setDescription("");
+    setDeadline("");
+    setPriority("");
+    setId("");
+  }, [task]);
 
   // Form Submit
   const handleSubmit = async (e) => {
@@ -32,6 +52,7 @@ const ModalFormTask = () => {
     }
 
     await submitTask({
+      id,
       name,
       description,
       deadline,
@@ -43,6 +64,7 @@ const ModalFormTask = () => {
     setDescription("");
     setDeadline("");
     setPriority("");
+    setId("");
   };
 
   const { msg } = alert;
@@ -113,7 +135,7 @@ const ModalFormTask = () => {
                     as="h3"
                     className="text-lg leading-6 font-bold text-gray-900"
                   >
-                    Create Task
+                    {id ? "Edit Task" : "Add Task"}
                   </Dialog.Title>
 
                   {msg && <Alert alert={alert} />}
@@ -191,7 +213,7 @@ const ModalFormTask = () => {
                     <input
                       type="submit"
                       className="bg-sky-600 hover:bg-sky-700 w-full p-3 text-white uppercase font-bold cursor-pointer transition-colors rounded text-sm"
-                      value="Add Task"
+                      value={id ? "Save Task" : "Add Task"}
                     />
                   </form>
                 </div>
