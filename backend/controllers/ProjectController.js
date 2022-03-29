@@ -1,5 +1,5 @@
 import Project from "../models/Project.js";
-import Task from "../models/Task.js";
+import User from "../models/User.js";
 
 const getProjects = async (req, res) => {
   //Obtener proyectos
@@ -96,8 +96,25 @@ const deleteProject = async (req, res) => {
   }
 };
 
+const searchCollaborator = async (req, res) => {
+  //Buscar Colaborador
+  const { email } = req.body;
+
+  //Verificamos que el usuario esté registrado
+  const user = await User.findOne({ email }).select(
+    "-confirmed -createdAt -password -token -updatedAt -__v"
+  );
+
+  if (!user) {
+    const error = new Error("Usuario No Encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  res.json(user);
+};
+
 const addCollaborator = async (req, res) => {
-  //Agregar colaborador/Ayudante
+  //Agregar colaborador
 };
 
 const deleteCollaborator = async (req, res) => {
@@ -111,5 +128,6 @@ export {
   editProject,
   deleteProject,
   addCollaborator,
+  searchCollaborator,
   deleteCollaborator,
 };

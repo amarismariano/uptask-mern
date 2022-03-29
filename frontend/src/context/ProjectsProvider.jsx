@@ -12,6 +12,7 @@ const ProjectsProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [modalFormTask, setModalFormTask] = useState(false);
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
+  const [collaborator, setCollaborator] = useState("");
 
   const navigate = useNavigate();
 
@@ -313,6 +314,38 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  //We add new Collaborators to the project
+  const submitCollaborator = async (email) => {
+    setLoading(true);
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post(
+        "/proyectos/colaboradores",
+        { email },
+        config
+      );
+      setCollaborator(data);
+      setAlert({});
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -332,6 +365,7 @@ const ProjectsProvider = ({ children }) => {
         handleModalDeleteTask,
         submitTask,
         deleteTask,
+        submitCollaborator,
       }}
     >
       {children}
