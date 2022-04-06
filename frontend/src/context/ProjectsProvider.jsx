@@ -13,6 +13,7 @@ const ProjectsProvider = ({ children }) => {
   const [modalFormTask, setModalFormTask] = useState(false);
   const [modalDeleteTask, setModalDeleteTask] = useState(false);
   const [collaborator, setCollaborator] = useState({});
+  const [modalDeleteCollaborator, setModalDeleteCollaborator] = useState(false);
 
   const navigate = useNavigate();
 
@@ -381,6 +382,46 @@ const ProjectsProvider = ({ children }) => {
     }
   };
 
+  const handleModalDeleteCollaborator = (collaborator) => {
+    setModalDeleteCollaborator(!modalDeleteCollaborator);
+    setCollaborator(collaborator);
+  };
+
+  // Eliminar colaborador
+  const deleteCollaborator = async () => {
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await clientAxios.post(
+        `/proyectos/eliminar-colaborador/${project._id}`,
+        { id: collaborator._id },
+        config
+      );
+      const updatedProject = { ...project };
+      updatedProject.collaborators = updatedProject.collaborators.filter(
+        (collaboratorState) => collaboratorState._id !== collaborator._id
+      );
+      setProject(updatedProject);
+
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+      setCollaborator({});
+      setModalDeleteCollaborator(false);
+    } catch (error) {
+      console.log(error.response);
+    }
+  };
+
   return (
     <ProjectsContext.Provider
       value={{
@@ -392,6 +433,7 @@ const ProjectsProvider = ({ children }) => {
         collaborator,
         modalFormTask,
         modalDeleteTask,
+        modalDeleteCollaborator,
         showAlert,
         submitProject,
         getProject,
@@ -403,6 +445,8 @@ const ProjectsProvider = ({ children }) => {
         deleteTask,
         submitCollaborator,
         addCollaborator,
+        handleModalDeleteCollaborator,
+        deleteCollaborator,
       }}
     >
       {children}
