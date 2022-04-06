@@ -115,6 +115,49 @@ const searchCollaborator = async (req, res) => {
 
 const addCollaborator = async (req, res) => {
   //Agregar colaborador
+  const project = await Project.findById(req.params.id);
+
+  // Verificamos que el proyecto existe
+  if (!project) {
+    const error = new Error("Proyecto no encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  // Si alguien que no creó el proyecto quiere agregar colaboradores
+  if (project.owner.toString() !== req.user._id.toString()) {
+    const error = new Error("Acción no válida");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  //Buscar Colaborador
+  const { email } = req.body;
+
+  //Verificamos que el usuario esté registrado
+  const user = await User.findOne({ email }).select(
+    "-confirmed -createdAt -password -token -updatedAt -__v"
+  );
+
+  // Verificamos que el usuario exista
+  if (!user) {
+    const error = new Error("Usuario No Encontrado");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  // Validar que el colaborador no es el admin del proyecto
+  if (project.owner.toString() === user._id.toString()) {
+    const error = new Error("El creador del proyecto no puede ser colaborador");
+    return res.status(404).json({ msg: error.message });
+  }
+
+  // Revisamos que no esté agregado el mismo colaborador al proyecto
+  if (project.collaborators.includes(user._id)) {
+    const error = new Error("El usuario ya pertenece al proyecto");
+    return res.status(404).json({ msg: error.message });
+  }
+  // Se puede agregar post validaciones
+  project.collaborators.push(user._id);
+  await project.save();
+  res.json({ msg: "Colaborador agregado correctamente" });
 };
 
 const deleteCollaborator = async (req, res) => {

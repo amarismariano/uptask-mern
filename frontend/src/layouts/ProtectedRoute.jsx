@@ -10,7 +10,7 @@ const ProtectedRoute = () => {
 
   return (
     <>
-      {auth._id ? (
+      {auth?._id ? (
         <div className="bg-gray-100">
           <Header />
 

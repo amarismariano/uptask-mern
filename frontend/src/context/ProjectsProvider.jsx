@@ -144,7 +144,10 @@ const ProjectsProvider = ({ children }) => {
       const { data } = await clientAxios(`/proyectos/${id}`, config);
       setProject(data);
     } catch (error) {
-      console.log(error);
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -347,7 +350,34 @@ const ProjectsProvider = ({ children }) => {
   };
 
   const addCollaborator = async (email) => {
-    console.log(email);
+    try {
+      //Validamos token
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await clientAxios.post(
+        `/proyectos/colaboradores/${project._id}`,
+        email,
+        config
+      );
+      setAlert({
+        msg: data.msg,
+        error: false,
+      });
+      setCollaborator({});
+    } catch (error) {
+      setAlert({
+        msg: error.response.data.msg,
+        error: true,
+      });
+    }
   };
 
   return (
