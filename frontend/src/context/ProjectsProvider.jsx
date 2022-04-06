@@ -372,6 +372,7 @@ const ProjectsProvider = ({ children }) => {
         error: false,
       });
       setCollaborator({});
+      setAlert({});
     } catch (error) {
       setAlert({
         msg: error.response.data.msg,

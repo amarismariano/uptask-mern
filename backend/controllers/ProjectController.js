@@ -26,7 +26,9 @@ const newProject = async (req, res) => {
 const getProject = async (req, res) => {
   //Obtener 1 proyecto determinado
   const { id } = req.params;
-  const project = await Project.findById(id).populate("tasks");
+  const project = await Project.findById(id)
+    .populate("tasks")
+    .populate("collaborators", "name email");
 
   //Si no existe proyecto
   if (!project) {
